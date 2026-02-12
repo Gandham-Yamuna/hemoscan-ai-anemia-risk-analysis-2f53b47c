@@ -5,7 +5,7 @@ import HeroSection from "@/components/HeroSection";
 import CBCInputForm, { type CBCData } from "@/components/CBCInputForm";
 import AnalysisDashboard from "@/components/AnalysisDashboard";
 import SamplePatientPicker from "@/components/SamplePatientPicker";
-import TechStackSection from "@/components/TechStackSection";
+
 import AnalysisHistory, { saveToHistory } from "@/components/AnalysisHistory";
 import { analyzeBloodData, type AnalysisResult } from "@/lib/anemiaAnalysis";
 
@@ -62,9 +62,6 @@ const Index = () => {
             </div>
             <AnalysisHistory onLoad={handleLoadHistory} />
             <CBCInputForm onAnalyze={handleAnalyze} />
-            <div id="tech">
-              <TechStackSection />
-            </div>
           </motion.div>
         )}
       </AnimatePresence>

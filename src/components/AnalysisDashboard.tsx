@@ -1,17 +1,16 @@
 import { AnalysisResult } from "@/lib/anemiaAnalysis";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { AlertTriangle, CheckCircle, Info, XCircle, ArrowLeft, Activity, Download } from "lucide-react";
+import { AlertTriangle, CheckCircle, Info, XCircle, ArrowLeft, Activity, Download, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend,
+  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer,
 } from "recharts";
 import AIInsightsPanel from "@/components/AIInsightsPanel";
-import AdvancedCharts from "@/components/AdvancedCharts";
 import DietPlanPanel from "@/components/DietPlanPanel";
 import type { CBCData } from "@/components/CBCInputForm";
+import { generatePDFReport } from "@/lib/generateReport";
 
 interface AnalysisDashboardProps {
   result: AnalysisResult;
@@ -38,13 +37,6 @@ const AnalysisDashboard = ({ result, cbcData, onBack }: AnalysisDashboardProps) 
   const SevIcon = sev.icon;
   const rsk = riskConfig[result.riskLevel];
 
-  const modelCompare = [
-    { metric: "Accuracy", SVM: +(result.modelMetrics.svmAccuracy * 100).toFixed(1), LR: +(result.modelMetrics.lrAccuracy * 100).toFixed(1) },
-    { metric: "Precision", SVM: +(result.modelMetrics.svmPrecision * 100).toFixed(1), LR: +(result.modelMetrics.lrPrecision * 100).toFixed(1) },
-    { metric: "Recall", SVM: +(result.modelMetrics.svmRecall * 100).toFixed(1), LR: +(result.modelMetrics.lrRecall * 100).toFixed(1) },
-    { metric: "F1 Score", SVM: +(result.modelMetrics.svmF1 * 100).toFixed(1), LR: +(result.modelMetrics.lrF1 * 100).toFixed(1) },
-  ];
-
   const radarData = result.parameters.slice(0, 7).map((p) => {
     const range = p.refMax - p.refMin;
     const mid = (p.refMin + p.refMax) / 2;
@@ -55,9 +47,14 @@ const AnalysisDashboard = ({ result, cbcData, onBack }: AnalysisDashboardProps) 
   return (
     <section className="py-12 px-6">
       <div className="max-w-6xl mx-auto">
-        <Button variant="ghost" onClick={onBack} className="mb-6 text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Input
-        </Button>
+        <div className="flex items-center justify-between mb-6">
+          <Button variant="ghost" onClick={onBack} className="text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Input
+          </Button>
+          <Button onClick={() => generatePDFReport(result, cbcData)} className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow">
+            <FileDown className="w-4 h-4 mr-2" /> Export PDF Report
+          </Button>
+        </div>
 
         {/* Classification Header */}
         <motion.div
@@ -93,32 +90,39 @@ const AnalysisDashboard = ({ result, cbcData, onBack }: AnalysisDashboardProps) 
             <p className={`text-center text-sm font-semibold uppercase ${rsk.color}`}>{result.riskLevel} Risk</p>
           </motion.div>
 
-          {/* Model Performance */}
+          {/* Confidence */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="lg:col-span-2 bg-gradient-card border border-border rounded-2xl p-6 shadow-card"
           >
-            <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">Model Performance</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={modelCompare} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(222 30% 18%)" />
-                <XAxis dataKey="metric" tick={{ fill: "hsl(215 20% 55%)", fontSize: 12 }} />
-                <YAxis domain={[80, 100]} tick={{ fill: "hsl(215 20% 55%)", fontSize: 12 }} />
-                <Tooltip contentStyle={{ background: "hsl(222 47% 9%)", border: "1px solid hsl(222 30% 18%)", borderRadius: 8 }} />
-                <Bar dataKey="SVM" fill="hsl(0 72% 51%)" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="LR" fill="hsl(170 60% 45%)" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">Classification Confidence</h3>
+            <div className="flex items-center gap-6">
+              <div className="text-center flex-1">
+                <span className="text-4xl font-black font-mono text-primary">{(result.classification.confidence * 100).toFixed(1)}%</span>
+                <p className="text-xs text-muted-foreground mt-2">Model confidence in the classification result</p>
+              </div>
+              <div className="flex-1 space-y-3">
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-muted-foreground">Confidence</span>
+                    <span className="font-mono text-foreground">{(result.classification.confidence * 100).toFixed(1)}%</span>
+                  </div>
+                  <Progress value={result.classification.confidence * 100} className="h-2" />
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-muted-foreground">Abnormal params</span>
+                    <span className="font-mono text-foreground">{result.parameters.filter(p => p.status !== "normal").length}/{result.parameters.length}</span>
+                  </div>
+                  <Progress value={(result.parameters.filter(p => p.status !== "normal").length / result.parameters.length) * 100} className="h-2" />
+                </div>
+              </div>
+            </div>
           </motion.div>
         </div>
 
         {/* AI Insights */}
         <div className="mb-8">
           <AIInsightsPanel cbcData={cbcData} result={result} />
-        </div>
-
-        {/* Advanced Charts */}
-        <div className="mb-8">
-          <AdvancedCharts />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

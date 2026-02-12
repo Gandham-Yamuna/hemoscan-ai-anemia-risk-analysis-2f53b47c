@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import AIInsightsPanel from "@/components/AIInsightsPanel";
 import AdvancedCharts from "@/components/AdvancedCharts";
+import DietPlanPanel from "@/components/DietPlanPanel";
 import type { CBCData } from "@/components/CBCInputForm";
 
 interface AnalysisDashboardProps {
@@ -184,6 +185,11 @@ const AnalysisDashboard = ({ result, cbcData, onBack }: AnalysisDashboardProps) 
             </p>
           </div>
         </motion.div>
+
+        {/* Diet Plan - shows only when risk detected */}
+        <div className="mt-8">
+          <DietPlanPanel result={result} />
+        </div>
       </div>
     </section>
   );

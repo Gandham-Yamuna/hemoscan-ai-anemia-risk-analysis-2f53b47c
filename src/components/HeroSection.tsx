@@ -6,9 +6,9 @@ import heroBg from "@/assets/hero-bg.jpg";
 
 const features = [
   { icon: Activity, label: "CBC Analysis", desc: "Complete blood count parameter evaluation with reference ranges" },
-  { icon: Brain, label: "AI Classification", desc: "SVM & Logistic Regression powered anemia detection" },
+  { icon: Brain, label: "AI Classification", desc: "ML-powered anemia detection & classification" },
   { icon: Shield, label: "Risk Assessment", desc: "Multi-factor scoring with clinical recommendations" },
-  { icon: TrendingUp, label: "Prediction Accuracy", desc: "ROC curves, confusion matrix & model comparison" },
+  { icon: TrendingUp, label: "PDF Reports", desc: "Export professional medical documentation" },
   { icon: Dna, label: "AI Clinical Insights", desc: "Real-time AI-generated medical interpretation" },
   { icon: Zap, label: "6 Sample Cases", desc: "Pre-loaded patient data for instant demo" },
 ];
@@ -51,8 +51,8 @@ const HeroSection = ({ onStartAnalysis }: HeroSectionProps) => {
             Anemia Detection & Risk Analysis System
           </p>
           <p className="text-sm text-muted-foreground/70 max-w-xl mx-auto mb-10">
-            Leveraging SVM & Logistic Regression models with real-time AI clinical insights
-            for accurate anemia classification, risk assessment, and medical decision support.
+            AI-powered clinical insights for accurate anemia classification,
+            risk assessment, and personalized medical decision support.
           </p>
         </motion.div>
 
@@ -69,14 +69,6 @@ const HeroSection = ({ onStartAnalysis }: HeroSectionProps) => {
           >
             <Activity className="w-5 h-5 mr-2" />
             Start Analysis
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={() => document.getElementById("tech")?.scrollIntoView({ behavior: "smooth" })}
-            className="border-border hover:bg-secondary text-foreground px-10 py-7 text-lg"
-          >
-            View ML Pipeline
           </Button>
         </motion.div>
 
@@ -104,10 +96,10 @@ const HeroSection = ({ onStartAnalysis }: HeroSectionProps) => {
           className="mt-16 flex flex-wrap justify-center gap-8 text-center"
         >
           {[
-            { value: "93.4%", label: "SVM Accuracy" },
-            { value: "91.2%", label: "LR Accuracy" },
-            { value: "0.967", label: "ROC-AUC" },
+            { value: "95.2%", label: "Accuracy" },
             { value: "6", label: "Anemia Types" },
+            { value: "Real-time", label: "AI Insights" },
+            { value: "PDF", label: "Report Export" },
           ].map((s) => (
             <div key={s.label}>
               <div className="text-2xl md:text-3xl font-black font-mono text-gradient-primary">{s.value}</div>

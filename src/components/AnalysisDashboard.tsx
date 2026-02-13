@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer,
 } from "recharts";
-import AIInsightsPanel from "@/components/AIInsightsPanel";
+
 import DietPlanPanel from "@/components/DietPlanPanel";
 import type { CBCData } from "@/components/CBCInputForm";
 import { generatePDFReport } from "@/lib/generateReport";
@@ -118,11 +118,6 @@ const AnalysisDashboard = ({ result, cbcData, onBack }: AnalysisDashboardProps) 
               </div>
             </div>
           </motion.div>
-        </div>
-
-        {/* AI Insights */}
-        <div className="mb-8">
-          <AIInsightsPanel cbcData={cbcData} result={result} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
